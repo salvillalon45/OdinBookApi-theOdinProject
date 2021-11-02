@@ -1,0 +1,48 @@
+{
+	"name": "theodinproject-odinbook",
+	"version": "0.0.0",
+	"private": true,
+	"engines": {
+		"node": "14.15.4"
+	},
+	"scripts": {
+		"tsstart": "nodemon app.ts",
+		"start": "node ./bin/www",
+		"devstart": "nodemon ./bin/www.ts",
+		"debug": "nodemon --inspect index.js ",
+		"serverstart": "SET DEBUG=theodinproject-odinbook:* & npm run devstart",
+		"debugstart": "SET DEBUG=theodinproject-odinbook:* & npm run debug",
+		"build": "tsc -p ."
+	},
+	"nodemonConfig": {
+		"ext": "js, mjs, ts, json"
+	},
+	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"compression": "^1.7.4",
+		"cookie-parser": "~1.4.4",
+		"date-fns": "^2.25.0",
+		"debug": "~2.6.9",
+		"dotenv": "^10.0.0",
+		"ejs": "~2.6.1",
+		"express": "~4.16.1",
+		"express-validator": "^6.13.0",
+		"helmet": "^4.6.0",
+		"http-errors": "~1.6.3",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^6.0.12",
+		"mongoose-unique-validator": "^3.0.0",
+		"morgan": "~1.9.1",
+		"node-sass-middleware": "0.11.0",
+		"serve-favicon": "^2.5.0"
+	},
+	"devDependencies": {
+		"@types/bcryptjs": "^2.4.2",
+		"@types/express": "^4.17.13",
+		"@types/jsonwebtoken": "^8.5.5",
+		"@types/node": "^16.11.6",
+		"nodemon": "^2.0.14",
+		"ts-node": "^10.4.0",
+		"typescript": "^4.4.4"
+	}
+}
