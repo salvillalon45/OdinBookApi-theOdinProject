@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import {
 	genPassword,
 	issueJWT,
-	checkUserExists,
+	logInValidationChain,
 	signUpValidationChain,
 	checkValidPassword
 } from '../libs/authUtils';
@@ -31,6 +31,12 @@ exports.sign_up_post = [
 			} = req.body;
 
 			const hashPassword = await genPassword(password);
+			if (hashPassword.includes('Error:')) {
+				return res.status(404).json({
+					message: 'GEN PASSWORD: Error when trying to hash password',
+					errors: [hashPassword]
+				});
+			}
 
 			const newUser = new User({
 				first_name,
@@ -46,7 +52,7 @@ exports.sign_up_post = [
 
 			const newUserResult = await newUser.save();
 
-			res.status(200).json({
+			return res.status(200).json({
 				message: 'User signed up successfully',
 				user: newUserResult
 			});
@@ -69,39 +75,52 @@ exports.sign_up_post = [
 	}
 ];
 
-// exports.log_in_post = async function (req, res, next) {
-// 	try {
-// 		const { username, password } = req.body;
+exports.log_in_post = [
+	...logInValidationChain,
+	async function (req: Request, res: Response, next: NextFunction) {
+		console.log('IN HERE');
+		try {
+			const validationResult = checkValidationErrors(req);
+			if (validationResult) {
+				return res.status(404).json({
+					message: 'LOG IN: Error with fields',
+					errors: validationResult
+				});
+			}
 
-// 		const foundUser = await User.findOne({ username });
+			const { username, password } = req.body;
 
-// 		if (!foundUser) {
-// 			throw {
-// 				message: 'LOG IN: Error while trying to log in user',
-// 				errors: ['Cannot find user']
-// 			};
-// 		}
+			const foundUser = await User.findOne({ username });
+			if (!foundUser) {
+				return res.status(404).json({
+					message: 'LOG IN: Error while finding a user',
+					errors: ['User not found']
+				});
+			}
 
-// 		if (await checkValidPassword(foundUser.password, password)) {
-// 			const { token, expiresIn } = issueJWT(foundUser);
+			if (await checkValidPassword(foundUser.password, password)) {
+				const { token, expiresIn } = issueJWT(foundUser._id);
 
-// 			res.status(200).json({
-// 				token: token,
-// 				expiresIn: expiresIn,
-// 				user: foundUser
-// 			});
-// 		} else {
-// 			throw {
-// 				message: 'LOG IN: Error while trying to log in user',
-// 				errors: ['Entered wrong password']
-// 			};
-// 		}
-// 	} catch (err) {
-// 		console.log('LOG IN: Error while trying to log in user');
-// 		console.log(err);
-// 		res.status(500).json({
-// 			message: 'LOG IN: Error while trying to log in user',
-// 			errors: err.errors
-// 		});
-// 	}
-// };
+				return res.status(200).json({
+					message: 'Log in successful',
+					token: token,
+					expiresIn: expiresIn,
+					user: foundUser
+				});
+			} else {
+				return res.status(404).json({
+					message: 'LOG IN: Error while checking for passwords',
+					errors: ['Entered wrong password']
+				});
+			}
+		} catch (err: any) {
+			console.log('LOG IN: Error while trying to log in user');
+			console.log(err);
+
+			res.status(500).json({
+				message: 'LOG IN: Error while trying to log in user',
+				errors: err.errors
+			});
+		}
+	}
+];

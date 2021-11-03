@@ -28,28 +28,25 @@ const signUpValidationChain = [
 		.withMessage('Last name cannot be empty')
 ];
 
+const logInValidationChain = [
+	body('username')
+		.trim()
+		.isLength({ min: 1 })
+		.escape()
+		.withMessage('Username is required'),
+	body('password')
+		.trim()
+		.isLength({ min: 1 })
+		.escape()
+		.withMessage('Password is required')
+];
+
 async function checkValidPassword(
 	foundUserPassword: string,
 	inputPassword: string
 ) {
 	const match = await bcrypt.compare(inputPassword, foundUserPassword);
 	return match ? true : false;
-}
-
-async function checkUserExists(username: string) {
-	try {
-		const isUserInDB = await User.find({ username });
-		if (isUserInDB.length > 0) {
-			return true;
-		}
-
-		return false;
-	} catch (err: any) {
-		throw {
-			message: 'CHECK USER EXISTS: Error when checking for users exists',
-			errors: [err.message]
-		};
-	}
 }
 
 async function genPassword(userPassword: string) {
@@ -59,10 +56,7 @@ async function genPassword(userPassword: string) {
 
 		return hashPassword;
 	} catch (err: any) {
-		throw {
-			message: 'GEN PASSWORD: Error when trying to hash password',
-			errors: [err.message]
-		};
+		return `Error: ${err.message}`;
 	}
 }
 function issueJWT(userid: string) {
@@ -86,5 +80,6 @@ export {
 	genPassword,
 	checkUserExists,
 	checkValidPassword,
-	signUpValidationChain
+	signUpValidationChain,
+	logInValidationChain
 };

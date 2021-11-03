@@ -24,7 +24,7 @@ router.post('/sign-up', auth_controller.sign_up_post);
 
 // LOGIN
 // ------------------------------------------------------------
-// router.post('/log-in', auth_controller.log_in_post);
+router.post('/log-in', auth_controller.log_in_post);
 
 // POSTS
 // ------------------------------------------------------------
