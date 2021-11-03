@@ -78,7 +78,6 @@ function issueJWT(userid: string) {
 export {
 	issueJWT,
 	genPassword,
-	checkUserExists,
 	checkValidPassword,
 	signUpValidationChain,
 	logInValidationChain

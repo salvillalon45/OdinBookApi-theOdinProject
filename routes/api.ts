@@ -3,6 +3,7 @@ import { Application, Request, Response, NextFunction } from 'express';
 const router = express.Router();
 // const passport = require('passport');
 const auth_controller = require('../controllers/authController');
+const friend_controller = require('../controllers/friendController');
 // const post_controller = require('../controllers/postController');
 // const comment_controller = require('../controllers/commentController');
 
@@ -25,6 +26,12 @@ router.post('/sign-up', auth_controller.sign_up_post);
 // LOGIN
 // ------------------------------------------------------------
 router.post('/log-in', auth_controller.log_in_post);
+
+// FRIEND
+// ------------------------------------------------------------
+// This will be a protected route
+router.post('/friend-request', friend_controller.make_friend_request_post);
+router.put('/friend-request', friend_controller.accept_friend_request_put);
 
 // POSTS
 // ------------------------------------------------------------
