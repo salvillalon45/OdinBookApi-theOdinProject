@@ -32,6 +32,15 @@ router.post('/log-in', auth_controller.log_in_post);
 // This will be a protected route
 router.post('/friend-request', friend_controller.make_friend_request_post);
 router.put('/friend-request', friend_controller.accept_friend_request_put);
+router.delete(
+	'/friend-request/withdraw',
+	friend_controller.withdraw_friend_request_delete
+);
+router.delete(
+	'/friend-request/decline',
+	friend_controller.decline_friend_request_delete
+);
+router.delete('/friend-request/remove', friend_controller.remove_friend_delete);
 
 // POSTS
 // ------------------------------------------------------------

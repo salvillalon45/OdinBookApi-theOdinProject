@@ -7,7 +7,10 @@ import {
 	signUpValidationChain,
 	checkValidPassword
 } from '../libs/authUtils';
-import { checkValidationErrors } from '../libs/utils';
+import {
+	checkValidationErrors,
+	findByIdUpdateAndReturnNewResult
+} from '../libs/utils';
 const ObjectId = require('mongoose').Types.ObjectId;
 
 exports.make_friend_request_post = async function (
@@ -57,9 +60,10 @@ exports.make_friend_request_post = async function (
 			requestedFriendUserId
 		];
 		relevantUser.friend_requests = updatedFriendRequests;
-		const updatedUser = await User.findByIdAndUpdate(userid, relevantUser, {
-			new: true
-		});
+		const updatedUser = await findByIdUpdateAndReturnNewResult(
+			userid,
+			relevantUser
+		);
 		console.log({ updatedUser });
 		return res.status(200).json({
 			message: 'Friend request submitted',
@@ -119,9 +123,10 @@ exports.accept_friend_request_put = async function (
 			userToAcceptUserId
 		];
 		relevantUser.friends = updatedRelevantUserFriends;
-		const result = await User.findByIdAndUpdate(userid, relevantUser, {
-			new: true
-		});
+		const result = await findByIdUpdateAndReturnNewResult(
+			userid,
+			relevantUser
+		);
 
 		// const result = await User.findById(userid).populate('friends');
 		return res.status(200).json({
@@ -132,6 +137,159 @@ exports.accept_friend_request_put = async function (
 		return res.status(500).json({
 			message:
 				'ACCEPT FRIEND REQUEST: Error while trying to accept a friend request',
+			errors: [err.message]
+		});
+	}
+};
+
+exports.withdraw_friend_request_delete = async function (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
+	try {
+		const { userid, requestedFriendUserId } = req.body;
+		const relevantUser = await User.findById(userid);
+		const userToAccept = await User.findById(requestedFriendUserId);
+		if (!relevantUser || !userToAccept) {
+			return res.status(404).json({
+				context: 'WITHDRAW FRIEND REQUEST',
+				errors: ['User or Requested User not found']
+			});
+		}
+
+		// Check if friend request for the requestedFriendUserId exists
+		if (!relevantUser.friend_requests.includes(requestedFriendUserId)) {
+			return res.status(404).json({
+				context: 'WITHDRAW FRIEND REQUEST',
+				errors: ['Friend request not found']
+			});
+		}
+
+		// Now delete the request
+		const updatedRequests = relevantUser.friend_requests.filter(
+			(friend_request: any) =>
+				String(friend_request) !== requestedFriendUserId
+		);
+		relevantUser.friend_requests = updatedRequests;
+		const result = await findByIdUpdateAndReturnNewResult(
+			userid,
+			relevantUser
+		);
+
+		return res.status(200).json({
+			message: 'Friend request withdrew successfully',
+			user: result
+		});
+	} catch (err: any) {
+		return res.status(500).json({
+			message:
+				'WITHDRAW FRIEND REQUEST: Error while trying to withdraw a friend request',
+			errors: [err.message]
+		});
+	}
+};
+
+exports.decline_friend_request_delete = async function (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
+	try {
+		const { userid, userToDeclineUserId } = req.body;
+		const relevantUser = await User.findById(userid);
+		const userToDecline = await User.findById(userToDeclineUserId);
+		if (!relevantUser || !userToDecline) {
+			return res.status(404).json({
+				context: 'DECLINE FRIEND REQUEST',
+				errors: ['User or Requested User not found']
+			});
+		}
+
+		// Check if friend request from the userid exists
+		// if (!userToDecline.friend_requests.includes(requestedFriendUserId)) {
+		// 	return res.status(404).json({
+		// 		context: 'DECLINE FRIEND REQUEST',
+		// 		errors: ['Friend request not found']
+		// 	});
+		// }
+
+		// Now delete the request
+		const updatedRequests = userToDecline.friend_requests.filter(
+			(friend_request: any) => {
+				console.log({ friend_request });
+				console.log(String(friend_request));
+				return String(friend_request) !== userid;
+			}
+		);
+		userToDecline.friend_requests = updatedRequests;
+		const result = await findByIdUpdateAndReturnNewResult(
+			userToDeclineUserId,
+			userToDecline
+		);
+
+		return res.status(200).json({
+			message: 'Friend request declined successfully',
+			user: result
+		});
+	} catch (err: any) {
+		return res.status(500).json({
+			message:
+				'DECLINE FRIEND REQUEST: Error while trying to decline a friend request',
+			errors: [err.message]
+		});
+	}
+};
+
+exports.remove_friend_delete = async function (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
+	try {
+		const { userid, userToRemoveUserId } = req.body;
+		const relevantUser = await User.findById(userid);
+		const userToRemove = await User.findById(userToRemoveUserId);
+		if (!relevantUser || !userToRemove) {
+			return res.status(404).json({
+				context: 'REMOVE FRIEND',
+				errors: ['User or Requested User not found']
+			});
+		}
+
+		// Remove friend from relevant users friend list
+		const updatedRequestsRelevantUser = relevantUser.friends.filter(
+			(friend: any) => {
+				return String(friend) !== userToRemoveUserId;
+			}
+		);
+		relevantUser.friends = updatedRequestsRelevantUser;
+		const updateRelevantUser = await findByIdUpdateAndReturnNewResult(
+			userid,
+			relevantUser
+		);
+
+		// Remove friend from user to delete friends list
+		const updatedRequestsUserToRemove = userToRemove.friends.filter(
+			(friend: any) => {
+				return String(friend) !== userid;
+			}
+		);
+		userToRemove.friends = updatedRequestsUserToRemove;
+		const updateUserToRemove = await findByIdUpdateAndReturnNewResult(
+			userToRemoveUserId,
+			userToRemove
+		);
+
+		return res.status(200).json({
+			message: 'Friend removed successfully',
+			user: updateRelevantUser,
+			user_to_remove: updateUserToRemove
+		});
+	} catch (err: any) {
+		return res.status(500).json({
+			message:
+				'REMOVE FRIEND: Error while trying to remove a friend from friend list',
 			errors: [err.message]
 		});
 	}

@@ -67,9 +67,16 @@ function checkValidationErrors(req: Request) {
 	}
 }
 
+async function findByIdUpdateAndReturnNewResult(id: string, updateObject: any) {
+	return await User.findByIdAndUpdate(id, updateObject, {
+		new: true
+	});
+}
+
 export {
 	isObjectIdValid,
 	checkValidationErrors,
 	checkIdExists,
-	checkDBOperationResult
+	checkDBOperationResult,
+	findByIdUpdateAndReturnNewResult
 };
