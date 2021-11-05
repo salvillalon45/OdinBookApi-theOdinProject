@@ -4,7 +4,7 @@ const router = express.Router();
 // const passport = require('passport');
 const auth_controller = require('../controllers/authController');
 const friend_controller = require('../controllers/friendController');
-// const post_controller = require('../controllers/postController');
+const post_controller = require('../controllers/postController');
 // const comment_controller = require('../controllers/commentController');
 
 // router.get('/', function (req, res, next) {
@@ -44,13 +44,13 @@ router.delete('/friend-request/remove', friend_controller.remove_friend_delete);
 
 // POSTS
 // ------------------------------------------------------------
-// router.get('/posts', post_controller.get_posts);
+// router.get('/posts', post_controller.posts_get);
 // router.get('/posts/:postid', post_controller.post_detail);
-// router.post(
-// 	'/posts',
-// 	passport.authenticate('jwt', { session: false }),
-// 	post_controller.create_post
-// );
+router.post(
+	'/posts',
+	// passport.authenticate('jwt', { session: false }),
+	post_controller.create_post
+);
 // router.delete(
 // 	'/posts/:postid',
 // 	passport.authenticate('jwt', { session: false }),

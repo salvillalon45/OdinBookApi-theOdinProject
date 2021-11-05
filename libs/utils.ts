@@ -73,10 +73,17 @@ async function findByIdUpdateAndReturnNewResult(id: string, updateObject: any) {
 	});
 }
 
+function removeItemFromArray(arr: [], removeFlag: string) {
+	return arr.filter((item: any) => {
+		return String(item) !== removeFlag;
+	});
+}
+
 export {
 	isObjectIdValid,
 	checkValidationErrors,
 	checkIdExists,
 	checkDBOperationResult,
-	findByIdUpdateAndReturnNewResult
+	findByIdUpdateAndReturnNewResult,
+	removeItemFromArray
 };

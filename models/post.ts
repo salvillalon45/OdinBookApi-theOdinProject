@@ -39,4 +39,5 @@ PostSchema.virtual('date_posted').get(function (this: any) {
 	return format(new Date(this.timestamp), "dd MMMM yyyy ' at ' HH:mm");
 });
 
-module.exports = mongoose.model('Post', PostSchema);
+const Post = mongoose.model('Post', PostSchema);
+export default Post;

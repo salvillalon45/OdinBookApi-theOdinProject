@@ -1,8 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { body } from 'express-validator';
-import User from '../models/user';
 require('dotenv').config();
 
 const signUpValidationChain = [

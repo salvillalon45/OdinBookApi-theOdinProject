@@ -14,7 +14,6 @@ exports.sign_up_post = [
 	async function (req: Request, res: Response, next: NextFunction) {
 		try {
 			const validationResult = checkValidationErrors(req);
-
 			if (validationResult) {
 				return res.status(404).json({
 					message: 'SIGN UP: Error with fields',
