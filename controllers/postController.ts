@@ -2,19 +2,11 @@ import User from '../models/user';
 import Post from '../models/post';
 import { Request, Response, NextFunction } from 'express';
 import {
-	genPassword,
-	issueJWT,
-	logInValidationChain,
-	signUpValidationChain,
-	checkValidPassword
-} from '../libs/authUtils';
-import {
 	checkValidationErrors,
 	findByIdUpdateAndReturnNewResult,
 	removeItemFromArray
 } from '../libs/utils';
 import { postCreateUpdateValidationChain } from '../libs/chainsUtils';
-const ObjectId = require('mongoose').Types.ObjectId;
 
 exports.get_posts = async function (
 	req: Request,

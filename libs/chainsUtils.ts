@@ -8,4 +8,12 @@ const postCreateUpdateValidationChain = [
 		.withMessage('Post content cannot be empty')
 ];
 
-export { postCreateUpdateValidationChain };
+const commentCreateValidationChain = [
+	body('content')
+		.isLength({ min: 1 })
+		.trim()
+		.escape()
+		.withMessage('Comment content cannot be empty')
+];
+
+export { postCreateUpdateValidationChain, commentCreateValidationChain };
