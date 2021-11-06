@@ -34,4 +34,5 @@ CommentSchema.virtual('date_commented').get(function (this: any) {
 	return format(new Date(this.timestamp), "dd MMMM yyyy ' at ' HH:mm");
 });
 
-module.exports = mongoose.model('Comment', CommentSchema);
+const Comment = mongoose.model('Comment', CommentSchema);
+export default Comment;

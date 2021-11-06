@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import { Request, Response } from 'express';
 import User from '../models/user';
+import Post from '../models/post';
+import Comment from '../models/comment';
 import { validationResult } from 'express-validator';
 const ObjectId = require('mongoose').Types.ObjectId;
 require('dotenv').config();
@@ -67,8 +67,26 @@ function checkValidationErrors(req: Request) {
 	}
 }
 
-async function findByIdUpdateAndReturnNewResult(id: string, updateObject: any) {
-	return await User.findByIdAndUpdate(id, updateObject, {
+async function findByIdUpdateAndReturnNewResult(
+	id: string,
+	updateObject: any,
+	modelFlag: string
+) {
+	let modelToUse = null;
+
+	if (modelFlag === 'User') {
+		modelToUse = User;
+	} else if (modelFlag === 'Post') {
+		modelToUse = Post;
+	} else if (modelFlag === 'Comment') {
+		modelToUse = Comment;
+	}
+
+	if (modelToUse === null) {
+		return null;
+	}
+
+	return await modelToUse.findByIdAndUpdate(id, updateObject, {
 		new: true
 	});
 }

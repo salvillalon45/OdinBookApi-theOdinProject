@@ -54,7 +54,8 @@ exports.make_friend_request_post = async function (
 		relevantUser.friend_requests = updatedFriendRequests;
 		const updatedUser = await findByIdUpdateAndReturnNewResult(
 			userid,
-			relevantUser
+			relevantUser,
+			'User'
 		);
 		console.log({ updatedUser });
 		return res.status(200).json({
@@ -116,7 +117,8 @@ exports.accept_friend_request_put = async function (
 		relevantUser.friends = updatedRelevantUserFriends;
 		const result = await findByIdUpdateAndReturnNewResult(
 			userid,
-			relevantUser
+			relevantUser,
+			'User'
 		);
 
 		return res.status(200).json({
@@ -164,7 +166,8 @@ exports.withdraw_friend_request_delete = async function (
 		relevantUser.friend_requests = updatedRequests;
 		const result = await findByIdUpdateAndReturnNewResult(
 			userid,
-			relevantUser
+			relevantUser,
+			'User'
 		);
 
 		return res.status(200).json({
@@ -204,7 +207,8 @@ exports.decline_friend_request_delete = async function (
 		userToDecline.friend_requests = updatedRequests;
 		const result = await findByIdUpdateAndReturnNewResult(
 			userToDeclineUserId,
-			userToDecline
+			userToDecline,
+			'User'
 		);
 
 		return res.status(200).json({
@@ -244,7 +248,8 @@ exports.remove_friend_delete = async function (
 		relevantUser.friends = updatedRequestsRelevantUser;
 		const updateRelevantUser = await findByIdUpdateAndReturnNewResult(
 			userid,
-			relevantUser
+			relevantUser,
+			'User'
 		);
 
 		// Remove friend from user to delete friends list
@@ -255,7 +260,8 @@ exports.remove_friend_delete = async function (
 		userToRemove.friends = updatedRequestsUserToRemove;
 		const updateUserToRemove = await findByIdUpdateAndReturnNewResult(
 			userToRemoveUserId,
-			userToRemove
+			userToRemove,
+			'User'
 		);
 
 		return res.status(200).json({

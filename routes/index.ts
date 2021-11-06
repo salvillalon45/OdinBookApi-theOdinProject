@@ -1,10 +1,10 @@
 import express from 'express';
-import { Application, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 const router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req: Request, res: Response, next: NextFunction) {
-	res.render('index', { title: 'Express' });
+	return res.status(200).json('Hey there');
 });
 
-module.exports = router;
+export default router;

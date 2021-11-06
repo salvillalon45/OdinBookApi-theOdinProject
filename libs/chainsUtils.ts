@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-const postCreateValidationChain = [
+const postCreateUpdateValidationChain = [
 	body('content')
 		.isLength({ min: 1 })
 		.trim()
@@ -8,4 +8,4 @@ const postCreateValidationChain = [
 		.withMessage('Post content cannot be empty')
 ];
 
-export { postCreateValidationChain };
+export { postCreateUpdateValidationChain };

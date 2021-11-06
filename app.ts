@@ -1,18 +1,21 @@
 import express from 'express';
 import { Application, Request, Response, NextFunction } from 'express';
+import path from 'path';
+import helmet from 'helmet';
 const createError = require('http-errors');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 require('dotenv').config();
 const compression = require('compression');
-const helmet = require('helmet');
 const favicon = require('serve-favicon');
 
 // Import routes
-const indexRouter = require('./routes/index');
-const apiRouter = require('./routes/api');
+import indexRouter from './routes/index';
+import apiRouter from './routes/api';
+
+// Import Strategies
+require('./strategies/passportJWT');
 
 const app: Application = express();
 
