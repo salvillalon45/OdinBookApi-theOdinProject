@@ -1,22 +1,23 @@
+import { Request, Response } from 'express';
+
 import User from '../models/user';
-import { Request, Response, NextFunction } from 'express';
+
+import { genPassword, issueJWT, checkValidPassword } from '../libs/authUtils';
 import {
-	genPassword,
-	issueJWT,
 	logInValidationChain,
-	signUpValidationChain,
-	checkValidPassword
-} from '../libs/authUtils';
+	signUpValidationChain
+} from '../libs/chainsUtils';
 import { checkValidationErrors } from '../libs/utils';
+import { SIGN_UP, LOG_IN } from '../libs/constants';
 
 exports.sign_up_post = [
 	...signUpValidationChain,
-	async function (req: Request, res: Response, next: NextFunction) {
+	async function (req: Request, res: Response) {
 		try {
 			const validationResult = checkValidationErrors(req);
 			if (validationResult) {
 				return res.status(404).json({
-					message: 'SIGN UP: Error with fields',
+					context: SIGN_UP,
 					errors: validationResult
 				});
 			}
@@ -32,6 +33,7 @@ exports.sign_up_post = [
 			const hashPassword = await genPassword(password);
 			if (hashPassword.includes('Error:')) {
 				return res.status(404).json({
+					context: SIGN_UP,
 					message: 'GEN PASSWORD: Error when trying to hash password',
 					errors: [hashPassword]
 				});
@@ -43,7 +45,6 @@ exports.sign_up_post = [
 				username,
 				password: hashPassword,
 				timestamp: new Date(),
-				posts: [],
 				profile_pic_url: profile_pic_url ? profile_pic_url : '',
 				friends: [],
 				friend_requests: []
@@ -52,6 +53,7 @@ exports.sign_up_post = [
 			const newUserResult = await newUser.save();
 
 			return res.status(200).json({
+				context: SIGN_UP,
 				message: 'User signed up successfully',
 				user: newUserResult
 			});
@@ -61,12 +63,13 @@ exports.sign_up_post = [
 
 			if (err._message === 'User validation failed') {
 				return res.status(404).json({
-					message: 'SIGN UP: User already exists',
+					context: SIGN_UP,
 					errors: ['User already exists']
 				});
 			}
 
-			res.status(500).json({
+			return res.status(500).json({
+				context: SIGN_UP,
 				message: 'SIGN UP: Error while trying to save new user in db',
 				errors: [err.message]
 			});
@@ -76,13 +79,12 @@ exports.sign_up_post = [
 
 exports.log_in_post = [
 	...logInValidationChain,
-	async function (req: Request, res: Response, next: NextFunction) {
-		console.log('IN HERE');
+	async function (req: Request, res: Response) {
 		try {
 			const validationResult = checkValidationErrors(req);
 			if (validationResult) {
 				return res.status(404).json({
-					message: 'LOG IN: Error with fields',
+					context: LOG_IN,
 					errors: validationResult
 				});
 			}
@@ -92,7 +94,7 @@ exports.log_in_post = [
 			const foundUser = await User.findOne({ username });
 			if (!foundUser) {
 				return res.status(404).json({
-					message: 'LOG IN: Error while finding a user',
+					context: LOG_IN,
 					errors: ['User not found']
 				});
 			}
@@ -101,6 +103,7 @@ exports.log_in_post = [
 				const { token, expiresIn } = issueJWT(foundUser._id);
 
 				return res.status(200).json({
+					context: LOG_IN,
 					message: 'Log in successful',
 					token: token,
 					expiresIn: expiresIn,
@@ -108,7 +111,7 @@ exports.log_in_post = [
 				});
 			} else {
 				return res.status(404).json({
-					message: 'LOG IN: Error while checking for passwords',
+					context: LOG_IN,
 					errors: ['Entered wrong password']
 				});
 			}
@@ -117,6 +120,7 @@ exports.log_in_post = [
 			console.log(err);
 
 			res.status(500).json({
+				context: LOG_IN,
 				message: 'LOG IN: Error while trying to log in user',
 				errors: err.errors
 			});

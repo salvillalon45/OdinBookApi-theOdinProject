@@ -40,13 +40,7 @@ const UserSchema = new Schema({
 	},
 	profile_pic_url: {
 		type: String
-	},
-	posts: [
-		{
-			type: Schema.Types.ObjectId,
-			ref: 'Post'
-		}
-	]
+	}
 });
 
 UserSchema.plugin(uniqueValidator);

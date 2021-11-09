@@ -1,43 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { body } from 'express-validator';
 require('dotenv').config();
-
-const signUpValidationChain = [
-	body('username')
-		.trim()
-		.isLength({ min: 1 })
-		.escape()
-		.withMessage('Username must be at least 6 characters'),
-	body('password')
-		.trim()
-		.isLength({ min: 1 })
-		.escape()
-		.withMessage('Password must be at least 1 character'),
-	body('first_name')
-		.trim()
-		.isLength({ min: 1 })
-		.escape()
-		.withMessage('First name cannot be empty'),
-	body('last_name')
-		.trim()
-		.isLength({ min: 1 })
-		.escape()
-		.withMessage('Last name cannot be empty')
-];
-
-const logInValidationChain = [
-	body('username')
-		.trim()
-		.isLength({ min: 1 })
-		.escape()
-		.withMessage('Username is required'),
-	body('password')
-		.trim()
-		.isLength({ min: 1 })
-		.escape()
-		.withMessage('Password is required')
-];
 
 async function checkValidPassword(
 	foundUserPassword: string,
@@ -73,10 +36,4 @@ function issueJWT(userid: string) {
 	};
 }
 
-export {
-	issueJWT,
-	genPassword,
-	checkValidPassword,
-	signUpValidationChain,
-	logInValidationChain
-};
+export { issueJWT, genPassword, checkValidPassword };

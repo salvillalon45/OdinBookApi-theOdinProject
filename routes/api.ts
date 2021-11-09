@@ -4,7 +4,7 @@ const passport = require('passport');
 const auth_controller = require('../controllers/authController');
 const friend_controller = require('../controllers/friendController');
 const post_controller = require('../controllers/postController');
-// const comment_controller = require('../controllers/commentController');
+const comment_controller = require('../controllers/commentController');
 
 // SIGNUP
 // ------------------------------------------------------------
@@ -71,20 +71,25 @@ router.put(
 
 // COMMENTS
 // ------------------------------------------------------------
-// router.get(
-// 	'/posts/:postid/comments',
-// 	passport.authenticate('jwt', { session: false }),
-// 	comment_controller.get_comments
-// );
-// router.post('/posts/:postid/comments', comment_controller.create_comment);
-// router.delete(
-// 	'/posts/:postid/comments/:commentid',
-// 	passport.authenticate('jwt', { session: false }),
-// 	comment_controller.delete_comment
-// );
-// router.put(
-// 	'/posts/:postid/comments/:commentid',
-// 	comment_controller.update_comment
-// );
+router.post(
+	'/posts/:postid/comments',
+	passport.authenticate('jwt', { session: false }),
+	comment_controller.create_comment
+);
+router.delete(
+	'/posts/:postid/comments/:commentid',
+	passport.authenticate('jwt', { session: false }),
+	comment_controller.delete_comment
+);
+router.put(
+	'/posts/:postid/comments/:commentid/like',
+	passport.authenticate('jwt', { session: false }),
+	comment_controller.update_like_comment
+);
+router.put(
+	'/posts/:postid/comments/:commentid',
+	passport.authenticate('jwt', { session: false }),
+	comment_controller.update_comment
+);
 
 export default router;

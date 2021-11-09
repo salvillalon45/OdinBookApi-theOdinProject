@@ -9,6 +9,7 @@ const sassMiddleware = require('node-sass-middleware');
 require('dotenv').config();
 const compression = require('compression');
 const favicon = require('serve-favicon');
+// require('custom-env').env(true);
 
 // Import routes
 import indexRouter from './routes/index';
