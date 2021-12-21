@@ -10,7 +10,6 @@ require('dotenv').config();
 const compression = require('compression');
 const favicon = require('serve-favicon');
 const cors = require('cors');
-// require('custom-env').env(true);
 
 // Import routes
 import indexRouter from './routes/index';
@@ -59,9 +58,6 @@ app.use(
 console.log('waht is __dirname');
 console.log(__dirname);
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(express.static('public'));
-
-// app.use('/uploads', express.static('uploads'));
 
 // Add routes to middleware
 app.use('/', indexRouter);

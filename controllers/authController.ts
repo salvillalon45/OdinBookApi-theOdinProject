@@ -1,7 +1,10 @@
+// Express
 import { Request, Response } from 'express';
 
+// Models
 import User from '../models/user';
 
+// Utils
 import { genPassword, issueJWT, checkValidPassword } from '../libs/authUtils';
 import {
 	logInValidationChain,
@@ -22,13 +25,7 @@ exports.sign_up_post = [
 				});
 			}
 
-			const {
-				first_name,
-				last_name,
-				username,
-				password,
-				profile_pic_url
-			} = req.body;
+			const { first_name, last_name, username, password } = req.body;
 
 			const hashPassword = await genPassword(password);
 			if (hashPassword.includes('Error:')) {
@@ -45,7 +42,6 @@ exports.sign_up_post = [
 				username,
 				password: hashPassword,
 				timestamp: new Date(),
-				profile_pic_url: profile_pic_url ? profile_pic_url : '',
 				friends: [],
 				friend_requests: []
 			});
@@ -81,13 +77,10 @@ exports.sign_up_post = [
 exports.log_in_post = [
 	...logInValidationChain,
 	async function (req: Request, res: Response) {
-		console.log('In route 1');
 		try {
 			const { username, password } = req.body;
-			console.log('In route');
-			console.log({ username, password });
+
 			const validationResult = checkValidationErrors(req);
-			console.log({ validationResult });
 			if (validationResult) {
 				return res.status(404).json({
 					context: LOG_IN,
@@ -128,7 +121,6 @@ exports.log_in_post = [
 			res.status(500).json({
 				context: LOG_IN,
 				message: 'LOG IN: Error while trying to log in user',
-				// errors: err.errors
 				errors: [err.message]
 			});
 		}

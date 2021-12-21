@@ -82,6 +82,19 @@ exports.make_friend_request_post = async function (
 	}
 };
 
+/*
+	To Note. When thinking of Friend request. The way that it works is as follows.
+	All the friend requests that I received are from other users. Everytime a user send a friend
+	request. That friend request will get store in their array not in my friend_requests array
+	Example:
+	sal9 makes a friend request to sal10
+	sal9.friend_request array will be empty
+	sal10.friend_request will contain that request from sal9
+	In the code below
+	- If sal10 logs in to OdinBook they will see the friend request made from sal9
+	- userid will be sal10
+	- userToAcceptUserId will be sal9
+*/
 exports.accept_friend_request_put = async function (
 	req: Request,
 	res: Response
@@ -97,7 +110,7 @@ exports.accept_friend_request_put = async function (
 			});
 		}
 
-		// Check that requested user has a friend request from relevant user
+		// Check that relevant user has a friend request from userToAccept
 		if (!relevantUser.friend_requests.includes(userToAcceptUserId)) {
 			return res.status(400).json({
 				context: ACCEPT_FRIEND_REQUEST,
@@ -106,8 +119,6 @@ exports.accept_friend_request_put = async function (
 		}
 
 		// Here we clear the friend request that the userToAccept made to the relevant user
-		// User1 -----> User2 (User1 sends friend request)
-		// User1 <----- User2 (User2 accepts friend request) User1 = userToAccept and User2 = relevantUser
 		const updatedFriendsRequest = removeItemFromArray(
 			relevantUser.friend_requests,
 			userToAcceptUserId
@@ -145,16 +156,33 @@ exports.accept_friend_request_put = async function (
 	}
 };
 
+/*
+	To Note. When thinking of Friend request. The way that it works is as follows.
+	Everytime a user send a friend request. That friend request will get store in their array not 
+	in my friend_requests array
+	Example:
+	sal9 makes a friend request to sal10
+	sal9.friend_request array will be empty
+	sal10.friend_request will contain that request from sal9
+	In the code below
+	- If sal9 logs in to OdinBook they will see a list of friends that they can send friend requests to
+	- They will see sal10 as a potential friend option 
+	- sal9 will send friend request to sal10
+	- sal9 is userid
+	- sal10 is requestedFriendUserId
+	Since sal10 has a friend_request from sal9 and we are trying to withdraw the request that sal9 made
+	we are going to look into sal10 array and remove it
+*/
 exports.withdraw_friend_request_delete = async function (
 	req: Request,
 	res: Response
 ) {
 	try {
 		const { userid, requestedFriendUserId } = req.body;
-		const userToAccept = await User.findById(userid);
+		const userToWithdraw = await User.findById(userid);
 		const relevantUser = await User.findById(requestedFriendUserId);
 
-		if (!relevantUser || !userToAccept) {
+		if (!relevantUser || !userToWithdraw) {
 			return res.status(404).json({
 				context: WITHDRAW_FRIEND_REQUEST,
 				errors: ['User or Requested User not found']
@@ -168,26 +196,16 @@ exports.withdraw_friend_request_delete = async function (
 				errors: ['Friend request not found']
 			});
 		}
-		// if (!relevantUser.friend_requests.includes(requestedFriendUserId)) {
-		// 	return res.status(404).json({
-		// 		context: WITHDRAW_FRIEND_REQUEST,
-		// 		errors: ['Friend request not found']
-		// 	});
-		// }
 
 		// Now delete the request
 		const updatedRequests = removeItemFromArray(
 			relevantUser.friend_requests,
 			userid
 		);
-		// const updatedRequests = removeItemFromArray(
-		// 	relevantUser.friend_requests,
-		// 	requestedFriendUserId
-		// );
 		relevantUser.friend_requests = updatedRequests;
 
 		const result = await findByIdUpdateAndReturnNewResult(
-			relevantUser._id, // use to be userid
+			relevantUser._id,
 			relevantUser,
 			'User'
 		);
@@ -206,6 +224,15 @@ exports.withdraw_friend_request_delete = async function (
 	}
 };
 
+/*
+	To Note. Here we are looking at the point of view from a user who received a friend request but
+	now they are trying to decline the friend request they received
+	Example:
+	- sal9 send a friend request to sal10
+	- sal10 decides to decline the friend request
+	- sal0 is userid
+	- sal9 is userToDeclineUserId
+*/
 exports.decline_friend_request_delete = async function (
 	req: Request,
 	res: Response
@@ -226,17 +253,8 @@ exports.decline_friend_request_delete = async function (
 			relevantUser.friend_requests,
 			userToDeclineUserId
 		);
-		// const updatedRequests = removeItemFromArray(
-		// 	userToDecline.friend_requests,
-		// 	userid
-		// );
-		// userToDecline.friend_requests = updatedRequests;
 		relevantUser.friend_requests = updatedRequests;
-		// const result = await findByIdUpdateAndReturnNewResult(
-		// 	userToDeclineUserId,
-		// 	userToDecline,
-		// 	'User'
-		// );
+
 		const result = await findByIdUpdateAndReturnNewResult(
 			userid,
 			relevantUser,
@@ -257,6 +275,7 @@ exports.decline_friend_request_delete = async function (
 	}
 };
 
+// Not used
 exports.remove_friend_delete = async function (req: Request, res: Response) {
 	try {
 		const { userid, userToRemoveUserId } = req.body;

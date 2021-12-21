@@ -1,8 +1,13 @@
+// Passport
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
+
+// Strategies
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 require('dotenv').config();
+
+// Models
 import User from '../models/user';
 
 passport.use(
@@ -17,8 +22,6 @@ passport.use(
 		) {
 			try {
 				const user = await User.findById(jwtPayload.sub);
-				// console.log('PASSPORT JWT STRATEGY: What is User');
-				// console.log(user);
 				return done(null, user);
 			} catch (err) {
 				console.log(
