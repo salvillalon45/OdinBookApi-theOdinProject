@@ -64,6 +64,7 @@ exports.sign_up_post = [
 			if (err._message === 'User validation failed') {
 				return res.status(404).json({
 					context: SIGN_UP,
+					message: 'SIGN UP: User already exists',
 					errors: ['User already exists']
 				});
 			}
@@ -80,8 +81,13 @@ exports.sign_up_post = [
 exports.log_in_post = [
 	...logInValidationChain,
 	async function (req: Request, res: Response) {
+		console.log('In route 1');
 		try {
+			const { username, password } = req.body;
+			console.log('In route');
+			console.log({ username, password });
 			const validationResult = checkValidationErrors(req);
+			console.log({ validationResult });
 			if (validationResult) {
 				return res.status(404).json({
 					context: LOG_IN,
@@ -89,12 +95,11 @@ exports.log_in_post = [
 				});
 			}
 
-			const { username, password } = req.body;
-
 			const foundUser = await User.findOne({ username });
 			if (!foundUser) {
 				return res.status(404).json({
 					context: LOG_IN,
+					message: 'LOG IN: User not found',
 					errors: ['User not found']
 				});
 			}
@@ -112,6 +117,7 @@ exports.log_in_post = [
 			} else {
 				return res.status(404).json({
 					context: LOG_IN,
+					message: 'LOG IN: Entered wrong password',
 					errors: ['Entered wrong password']
 				});
 			}
@@ -122,7 +128,8 @@ exports.log_in_post = [
 			res.status(500).json({
 				context: LOG_IN,
 				message: 'LOG IN: Error while trying to log in user',
-				errors: err.errors
+				// errors: err.errors
+				errors: [err.message]
 			});
 		}
 	}

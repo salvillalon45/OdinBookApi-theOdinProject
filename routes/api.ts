@@ -1,10 +1,14 @@
+// Express & Packages
 import express from 'express';
 const router = express.Router();
 const passport = require('passport');
+
+// Controllers
 const auth_controller = require('../controllers/authController');
 const friend_controller = require('../controllers/friendController');
 const post_controller = require('../controllers/postController');
 const comment_controller = require('../controllers/commentController');
+const user_controller = require('../controllers/userController');
 
 // SIGNUP
 // ------------------------------------------------------------
@@ -44,7 +48,7 @@ router.delete(
 // POSTS
 // ------------------------------------------------------------
 router.get(
-	'/posts',
+	'/posts/:userid',
 	passport.authenticate('jwt', { session: false }),
 	post_controller.get_posts
 );
@@ -68,6 +72,11 @@ router.put(
 	passport.authenticate('jwt', { session: false }),
 	post_controller.update_like_post
 );
+router.put(
+	'/posts/:postid/image',
+	passport.authenticate('jwt', { session: false }),
+	post_controller.update_post_with_image
+);
 
 // COMMENTS
 // ------------------------------------------------------------
@@ -90,6 +99,20 @@ router.put(
 	'/posts/:postid/comments/:commentid',
 	passport.authenticate('jwt', { session: false }),
 	comment_controller.update_comment
+);
+
+// USERS
+// ------------------------------------------------------------
+router.get('/users', user_controller.get_users);
+router.get(
+	'/users/:userid',
+	passport.authenticate('jwt', { session: false }),
+	user_controller.get_user_by_id
+);
+router.put(
+	'/users/:userid/image',
+	passport.authenticate('jwt', { session: false }),
+	user_controller.update_user_with_image
 );
 
 export default router;

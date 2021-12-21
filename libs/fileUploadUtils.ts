@@ -1,3 +1,4 @@
+// Express & Packages
 import { Request } from 'express';
 const multer = require('multer');
 
@@ -13,36 +14,25 @@ const storage = multer.diskStorage({
 	}
 });
 
+const fileFilter = (req: Request, file: any, cb: any) => {
+	const { mimetype } = file;
+	if (
+		mimetype == 'image/png' ||
+		mimetype == 'image/jpg' ||
+		mimetype == 'image/jpeg'
+	) {
+		cb(null, true);
+	} else {
+		// rejects storing a file
+		cb(null, false);
+		return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+	}
+};
+
 export const upload = multer({
 	storage: storage,
-	fileFilter: function (req: Request, file: any, cb: any) {
-		const { mimetype } = file;
-		if (
-			mimetype == 'image/png' ||
-			mimetype == 'image/jpg' ||
-			mimetype == 'image/jpeg'
-		) {
-			cb(null, true);
-		} else {
-			cb(null, false);
-			return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
-		}
-	}
+	limits: {
+		fileSize: 1024 * 1024 * 5
+	},
+	fileFilter: fileFilter
 });
-
-// module.exports = multer({
-// 	storage: storage,
-// 	fileFilter: (req: Request, file: any, cb: any) => {
-// 		const { mimetype } = file;
-// 		if (
-// 			mimetype == 'image/png' ||
-// 			mimetype == 'image/jpg' ||
-// 			mimetype == 'image/jpeg'
-// 		) {
-// 			cb(null, true);
-// 		} else {
-// 			cb(null, false);
-// 			return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
-// 		}
-// 	}
-// });

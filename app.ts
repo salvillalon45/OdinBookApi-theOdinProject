@@ -9,6 +9,7 @@ const sassMiddleware = require('node-sass-middleware');
 require('dotenv').config();
 const compression = require('compression');
 const favicon = require('serve-favicon');
+const cors = require('cors');
 // require('custom-env').env(true);
 
 // Import routes
@@ -19,6 +20,9 @@ import apiRouter from './routes/api';
 require('./strategies/passportJWT');
 
 const app: Application = express();
+
+// Enable all traffic DANGEROUS GOING TO CHANGE
+app.use(cors());
 
 // Compress all routes
 app.use(compression());
@@ -52,7 +56,12 @@ app.use(
 		sourceMap: true
 	})
 );
+console.log('waht is __dirname');
+console.log(__dirname);
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static('public'));
+
+// app.use('/uploads', express.static('uploads'));
 
 // Add routes to middleware
 app.use('/', indexRouter);

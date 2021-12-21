@@ -1,7 +1,10 @@
+// Express
 import { Request, Response } from 'express';
 
+// Models
 import User from '../models/user';
 
+// Utils
 import {
 	findByIdUpdateAndReturnNewResult,
 	removeItemFromArray
@@ -54,21 +57,20 @@ exports.make_friend_request_post = async function (
 			});
 		}
 
-		// Push the requesting user's id to the relevant user's friendrequest array
-		const updatedFriendRequests = [
-			...relevantUser.friend_requests,
-			requestedFriendUserId
+		const requestedUserUpdatedFriendRequests = [
+			...requestedUser.friend_requests,
+			userid
 		];
-		relevantUser.friend_requests = updatedFriendRequests;
-		const updatedUser = await findByIdUpdateAndReturnNewResult(
-			userid,
-			relevantUser,
+		requestedUser.friend_requests = requestedUserUpdatedFriendRequests;
+		const updatedRequestedUser = await findByIdUpdateAndReturnNewResult(
+			requestedFriendUserId,
+			requestedUser,
 			'User'
 		);
 
 		return res.status(200).json({
 			message: 'Friend request submitted',
-			user: updatedUser
+			requested_user: updatedRequestedUser
 		});
 	} catch (err: any) {
 		return res.status(500).json({
@@ -96,7 +98,7 @@ exports.accept_friend_request_put = async function (
 		}
 
 		// Check that requested user has a friend request from relevant user
-		if (!userToAccept.friend_requests.includes(userid)) {
+		if (!relevantUser.friend_requests.includes(userToAcceptUserId)) {
 			return res.status(400).json({
 				context: ACCEPT_FRIEND_REQUEST,
 				errors: ['Friend request not found']
@@ -107,10 +109,10 @@ exports.accept_friend_request_put = async function (
 		// User1 -----> User2 (User1 sends friend request)
 		// User1 <----- User2 (User2 accepts friend request) User1 = userToAccept and User2 = relevantUser
 		const updatedFriendsRequest = removeItemFromArray(
-			userToAccept.friend_requests,
-			userid
+			relevantUser.friend_requests,
+			userToAcceptUserId
 		);
-		userToAccept.friend_requests = updatedFriendsRequest;
+		relevantUser.friend_requests = updatedFriendsRequest;
 
 		// Here we update the friends list of userToAccept
 		const updatedUserToAcceptFriends = [...userToAccept.friends, userid];
@@ -149,8 +151,9 @@ exports.withdraw_friend_request_delete = async function (
 ) {
 	try {
 		const { userid, requestedFriendUserId } = req.body;
-		const relevantUser = await User.findById(userid);
-		const userToAccept = await User.findById(requestedFriendUserId);
+		const userToAccept = await User.findById(userid);
+		const relevantUser = await User.findById(requestedFriendUserId);
+
 		if (!relevantUser || !userToAccept) {
 			return res.status(404).json({
 				context: WITHDRAW_FRIEND_REQUEST,
@@ -159,21 +162,32 @@ exports.withdraw_friend_request_delete = async function (
 		}
 
 		// Check if friend request for the requestedFriendUserId exists
-		if (!relevantUser.friend_requests.includes(requestedFriendUserId)) {
+		if (!relevantUser.friend_requests.includes(userid)) {
 			return res.status(404).json({
 				context: WITHDRAW_FRIEND_REQUEST,
 				errors: ['Friend request not found']
 			});
 		}
+		// if (!relevantUser.friend_requests.includes(requestedFriendUserId)) {
+		// 	return res.status(404).json({
+		// 		context: WITHDRAW_FRIEND_REQUEST,
+		// 		errors: ['Friend request not found']
+		// 	});
+		// }
 
 		// Now delete the request
 		const updatedRequests = removeItemFromArray(
 			relevantUser.friend_requests,
-			requestedFriendUserId
+			userid
 		);
+		// const updatedRequests = removeItemFromArray(
+		// 	relevantUser.friend_requests,
+		// 	requestedFriendUserId
+		// );
 		relevantUser.friend_requests = updatedRequests;
+
 		const result = await findByIdUpdateAndReturnNewResult(
-			userid,
+			relevantUser._id, // use to be userid
 			relevantUser,
 			'User'
 		);
@@ -209,13 +223,23 @@ exports.decline_friend_request_delete = async function (
 
 		// Now delete the request
 		const updatedRequests = removeItemFromArray(
-			userToDecline.friend_requests,
-			userid
+			relevantUser.friend_requests,
+			userToDeclineUserId
 		);
-		userToDecline.friend_requests = updatedRequests;
+		// const updatedRequests = removeItemFromArray(
+		// 	userToDecline.friend_requests,
+		// 	userid
+		// );
+		// userToDecline.friend_requests = updatedRequests;
+		relevantUser.friend_requests = updatedRequests;
+		// const result = await findByIdUpdateAndReturnNewResult(
+		// 	userToDeclineUserId,
+		// 	userToDecline,
+		// 	'User'
+		// );
 		const result = await findByIdUpdateAndReturnNewResult(
-			userToDeclineUserId,
-			userToDecline,
+			userid,
+			relevantUser,
 			'User'
 		);
 

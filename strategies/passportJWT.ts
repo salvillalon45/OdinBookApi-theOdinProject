@@ -17,8 +17,8 @@ passport.use(
 		) {
 			try {
 				const user = await User.findById(jwtPayload.sub);
-				console.log('PASSPORT JWT STRATEGY: What is User');
-				console.log(user);
+				// console.log('PASSPORT JWT STRATEGY: What is User');
+				// console.log(user);
 				return done(null, user);
 			} catch (err) {
 				console.log(

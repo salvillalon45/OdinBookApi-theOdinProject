@@ -1,0 +1,4 @@
+mongoose-unique-validator is a plugin which adds pre-save validation for unique fields within a Mongoose schema.
+This makes error handling much easier, since you will get a Mongoose validation error when you attempt to violate a unique constraint, rather than an E11000 error from MongoDB.
+Cool package that will help when checking if the user already exists!
+https://www.npmjs.com/package/mongoose-unique-validator

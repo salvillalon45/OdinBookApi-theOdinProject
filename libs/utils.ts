@@ -1,10 +1,12 @@
-import { Request, Response } from 'express';
+// Express & Packages
+import { Request } from 'express';
+import { validationResult } from 'express-validator';
+require('dotenv').config();
+
+// Models
 import User from '../models/user';
 import Post from '../models/post';
 import Comment from '../models/comment';
-import { validationResult } from 'express-validator';
-const ObjectId = require('mongoose').Types.ObjectId;
-require('dotenv').config();
 
 function checkValidationErrors(req: Request) {
 	const errors = validationResult(req);

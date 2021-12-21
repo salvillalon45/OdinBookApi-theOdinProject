@@ -20,6 +20,7 @@ async function genPassword(userPassword: string) {
 		return `Error: ${err.message}`;
 	}
 }
+
 function issueJWT(userid: string) {
 	const expiresIn = '7d';
 	const payload = {

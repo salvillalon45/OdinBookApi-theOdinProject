@@ -12,8 +12,13 @@ export const CREATE_POST = 'CREATE POST';
 export const UPDATE_POST = 'UPDATE POST';
 export const DELETE_POST = 'DELETE POST';
 export const LIKE_POST = 'LIKE POST';
+export const UPDATE_POST_WITH_IMAGE = 'UPDATE_POST_WITH_IMAGE';
 
 export const CREATE_COMMENT = 'CREATE COMMENT';
 export const DELETE_COMMENT = 'DELETE COMMENT';
 export const UPDATE_COMMENT = 'UPDATE COMMENT';
 export const LIKE_COMMENT = 'LIKE COMMENT';
+
+export const GET_USERS = 'GET USERS';
+export const GET_USER_BY_ID = 'GET USER BY ID';
+export const UPDATE_USER_WITH_IMAGE = 'UPDATE USER WITH IMAGE';
