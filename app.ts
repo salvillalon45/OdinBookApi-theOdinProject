@@ -57,7 +57,8 @@ app.use(
 );
 console.log('waht is __dirname');
 console.log(__dirname);
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 // Add routes to middleware
 app.use('/', indexRouter);
