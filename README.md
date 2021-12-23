@@ -30,7 +30,7 @@
                 -   When deploying my apps, I noticed that I was getting 404 for images that I would upload. I was able to figure out how to show the images, but I realized that my current solution will not work since my images will always get deleted
                 -   From Heroku [`This is crucial on Heroku, because your app’s dynos have an ephemeral filesystem. This means that all files that aren’t part of your application’s slug are lost whenever a dyno restarts or is replaced (this happens at least once daily).`](https://devcenter.heroku.com/articles/simple-file-upload)
                 -   They did suggest [Simple File Upload](https://app.simplefileupload.com/pricing) but I need to pay to use this
-                -   So we need a cloud based storage. Might try Firebase next time
+                -   For now I commented out the code for uploading files since we need a cloud based storage. Might try Firebase next time
 
         -   I learned about the multer npm package and how to use it
         -   I learned how to use the `new FormData()` and append files to it in the UI and then send it to the backend.
