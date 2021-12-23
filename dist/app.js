@@ -26,6 +26,7 @@ app.use(cors());
 app.use(compression());
 app.use((0, helmet_1.default)());
 // app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+// hello
 // Set up mongoose connection
 var mongoose = require('mongoose');
 var mongoDB = process.env.DEV_MONGODB_URI || process.env.MONGODB_URI;
