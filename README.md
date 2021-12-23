@@ -24,6 +24,14 @@
 
     -   **Image Uploads**
 
+        -   **IMPORTANT**
+
+            -   **Cloud Based Storage for Images**
+                -   When deploying my apps, I noticed that I was getting 404 for images that I would upload. I was able to figure out how to show the images, but I realized that my current solution will not work since my images will always get deleted
+                -   From Heroku [`This is crucial on Heroku, because your app’s dynos have an ephemeral filesystem. This means that all files that aren’t part of your application’s slug are lost whenever a dyno restarts or is replaced (this happens at least once daily).`](https://devcenter.heroku.com/articles/simple-file-upload)
+                -   They did suggest [Simple File Upload](https://app.simplefileupload.com/pricing) but I need to pay to use this
+                -   So we need a cloud based storage. Might try Firebase next time
+
         -   I learned about the multer npm package and how to use it
         -   I learned how to use the `new FormData()` and append files to it in the UI and then send it to the backend.
         -   **_console.log does not work on FormData_**
@@ -76,6 +84,8 @@
             	return !!withFilesFlag ? bodyData.image_obj : JSON.stringify(bodyData);
             }
             ```
+        -   **Serving Static Files**
+            -   Learning how the static directories work was crucial. This link helped me understand https://expressjs.com/en/starter/static-files.html
 
     -   **JS Refactoring and Reusable Code**
         -   One thing I practiced was reducing the lines of codes for files. I ended up creating 5 util files (inside the libs folder). I used to keep all utils in one file, but this will get messy. Separating them made it organized
