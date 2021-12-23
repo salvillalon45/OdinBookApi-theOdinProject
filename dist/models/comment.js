@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Mongoose & Packages
 var mongoose_1 = __importDefault(require("mongoose"));
 var date_fns_1 = require("date-fns");
 var Schema = mongoose_1.default.Schema;
@@ -31,8 +32,9 @@ var CommentSchema = new Schema({
         ref: 'Post',
         required: true
     }
-});
+}, { toJSON: { virtuals: true } });
 CommentSchema.virtual('date_commented').get(function () {
     return (0, date_fns_1.format)(new Date(this.timestamp), "dd MMMM yyyy ' at ' HH:mm");
 });
-module.exports = mongoose_1.default.model('Comment', CommentSchema);
+var Comment = mongoose_1.default.model('Comment', CommentSchema);
+exports.default = Comment;

@@ -28,7 +28,7 @@ app.use(compression());
 
 app.use(helmet());
 
-app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+// app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 // Set up mongoose connection
 const mongoose = require('mongoose');

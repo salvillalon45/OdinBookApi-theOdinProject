@@ -39,57 +39,58 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeItemFromArray = exports.findByIdUpdateAndReturnNewResult = exports.checkValidationErrors = void 0;
-var express_validator_1 = require("express-validator");
+exports.checkValidPassword = exports.genPassword = exports.issueJWT = void 0;
+// Packages
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+var bcryptjs_1 = __importDefault(require("bcryptjs"));
 require('dotenv').config();
-// Models
-var user_1 = __importDefault(require("../models/user"));
-var post_1 = __importDefault(require("../models/post"));
-var comment_1 = __importDefault(require("../models/comment"));
-function checkValidationErrors(req) {
-    var errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        var validationErrors = errors.array().map(function (e) {
-            return e.msg;
-        });
-        return validationErrors;
-    }
-    else {
-        return null;
-    }
-}
-exports.checkValidationErrors = checkValidationErrors;
-function findByIdUpdateAndReturnNewResult(id, updateObject, modelFlag) {
+function checkValidPassword(foundUserPassword, inputPassword) {
     return __awaiter(this, void 0, void 0, function () {
-        var modelToUse;
+        var match;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    modelToUse = null;
-                    if (modelFlag === 'User') {
-                        modelToUse = user_1.default;
-                    }
-                    else if (modelFlag === 'Post') {
-                        modelToUse = post_1.default;
-                    }
-                    else if (modelFlag === 'Comment') {
-                        modelToUse = comment_1.default;
-                    }
-                    if (modelToUse === null) {
-                        return [2 /*return*/, null];
-                    }
-                    return [4 /*yield*/, modelToUse.findByIdAndUpdate(id, updateObject, {
-                            new: true
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 0: return [4 /*yield*/, bcryptjs_1.default.compare(inputPassword, foundUserPassword)];
+                case 1:
+                    match = _a.sent();
+                    return [2 /*return*/, match ? true : false];
             }
         });
     });
 }
-exports.findByIdUpdateAndReturnNewResult = findByIdUpdateAndReturnNewResult;
-function removeItemFromArray(arr, removeFlag) {
-    return arr.filter(function (item) {
-        return String(item) !== removeFlag;
+exports.checkValidPassword = checkValidPassword;
+function genPassword(userPassword) {
+    return __awaiter(this, void 0, void 0, function () {
+        var saltRounds, hashPassword, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    saltRounds = 10;
+                    return [4 /*yield*/, bcryptjs_1.default.hash(userPassword, saltRounds)];
+                case 1:
+                    hashPassword = _a.sent();
+                    return [2 /*return*/, hashPassword];
+                case 2:
+                    err_1 = _a.sent();
+                    return [2 /*return*/, "Error: " + err_1.message];
+                case 3: return [2 /*return*/];
+            }
+        });
     });
 }
-exports.removeItemFromArray = removeItemFromArray;
+exports.genPassword = genPassword;
+function issueJWT(userid) {
+    var expiresIn = '7d';
+    var payload = {
+        sub: userid,
+        iat: Date.now()
+    };
+    var signedToken = jsonwebtoken_1.default.sign(payload, String(process.env.SECRET_KEY), {
+        expiresIn: expiresIn
+    });
+    return {
+        token: "Bearer " + signedToken,
+        expiresIn: expiresIn
+    };
+}
+exports.issueJWT = issueJWT;

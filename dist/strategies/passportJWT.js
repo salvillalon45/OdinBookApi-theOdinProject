@@ -39,57 +39,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeItemFromArray = exports.findByIdUpdateAndReturnNewResult = exports.checkValidationErrors = void 0;
-var express_validator_1 = require("express-validator");
+// Passport
+var passport = require('passport');
+var passportJWT = require('passport-jwt');
+// Strategies
+var JWTStrategy = passportJWT.Strategy;
+var ExtractJWT = passportJWT.ExtractJwt;
 require('dotenv').config();
 // Models
 var user_1 = __importDefault(require("../models/user"));
-var post_1 = __importDefault(require("../models/post"));
-var comment_1 = __importDefault(require("../models/comment"));
-function checkValidationErrors(req) {
-    var errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        var validationErrors = errors.array().map(function (e) {
-            return e.msg;
-        });
-        return validationErrors;
-    }
-    else {
-        return null;
-    }
-}
-exports.checkValidationErrors = checkValidationErrors;
-function findByIdUpdateAndReturnNewResult(id, updateObject, modelFlag) {
+passport.use(new JWTStrategy({
+    jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.SECRET_KEY
+}, function (jwtPayload, done) {
     return __awaiter(this, void 0, void 0, function () {
-        var modelToUse;
+        var user, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    modelToUse = null;
-                    if (modelFlag === 'User') {
-                        modelToUse = user_1.default;
-                    }
-                    else if (modelFlag === 'Post') {
-                        modelToUse = post_1.default;
-                    }
-                    else if (modelFlag === 'Comment') {
-                        modelToUse = comment_1.default;
-                    }
-                    if (modelToUse === null) {
-                        return [2 /*return*/, null];
-                    }
-                    return [4 /*yield*/, modelToUse.findByIdAndUpdate(id, updateObject, {
-                            new: true
-                        })];
-                case 1: return [2 /*return*/, _a.sent()];
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, user_1.default.findById(jwtPayload.sub)];
+                case 1:
+                    user = _a.sent();
+                    return [2 /*return*/, done(null, user)];
+                case 2:
+                    err_1 = _a.sent();
+                    console.log('PASSPORT JWT STRATEGY: Error when verifying token');
+                    console.log(err_1);
+                    return [2 /*return*/, done(null, false)];
+                case 3: return [2 /*return*/];
             }
         });
     });
-}
-exports.findByIdUpdateAndReturnNewResult = findByIdUpdateAndReturnNewResult;
-function removeItemFromArray(arr, removeFlag) {
-    return arr.filter(function (item) {
-        return String(item) !== removeFlag;
-    });
-}
-exports.removeItemFromArray = removeItemFromArray;
+}));

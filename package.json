@@ -7,12 +7,13 @@
 	},
 	"scripts": {
 		"tsstart": "nodemon app.ts",
-		"start": "nodemon ./bin/www.ts",
+		"start": "node ./bin/www",
 		"devstart": "nodemon ./bin/www.ts",
 		"debug": "nodemon --inspect index.js ",
 		"serverstart": "SET DEBUG=theodinproject-odinbook:* & npm run devstart",
 		"debugstart": "SET DEBUG=theodinproject-odinbook:* & npm run debug",
-		"build": "tsc -p ."
+		"build": "tsc -p .",
+		"postinstall": "tsc"
 	},
 	"nodemonConfig": {
 		"ext": "js, mjs, ts, json"
