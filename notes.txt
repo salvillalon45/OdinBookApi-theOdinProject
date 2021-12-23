@@ -2,3 +2,23 @@ mongoose-unique-validator is a plugin which adds pre-save validation for unique 
 This makes error handling much easier, since you will get a Mongoose validation error when you attempt to violate a unique constraint, rather than an E11000 error from MongoDB.
 Cool package that will help when checking if the user already exists!
 https://www.npmjs.com/package/mongoose-unique-validator
+
+```
+                                        // Create a test FormData object
+                                        var formData = new FormData();
+                                        formData.append('key1', 'value1');
+                                        formData.append('key2', 'value2');
+
+                                        // Display the key/value pairs
+                                        for (var pair of formData.entries()) {
+                                            console.log(pair[0]+ ', ' + pair[1]);
+                                        }
+                                    ```
+
+                                    -   **Image Uploads**
+
+                -   I learned about the multer npm package and how to use it
+                -   I learned how to use the `new FormData()` and append files to it in the UI and then send it to the backend.
+                -   _console.log does not work on FormData_
+
+            -   If you append a new item to your FormData and try to do console.log of it. It will be empty. I thought that I was not using it properly but then I found this [stackover flow post explaining how to view the contents of FormData](https://stackoverflow.com/a/17067016)
