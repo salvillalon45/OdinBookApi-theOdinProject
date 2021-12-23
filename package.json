@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"tsstart": "nodemon app.ts",
-		"start": "node ./bin/www",
+		"start": "nodemon ./bin/www.ts",
 		"devstart": "nodemon ./bin/www.ts",
 		"debug": "nodemon --inspect index.js ",
 		"serverstart": "SET DEBUG=theodinproject-odinbook:* & npm run devstart",
