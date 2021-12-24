@@ -25,7 +25,7 @@ import { postCreateUpdateValidationChain } from '../libs/chainsUtils';
 
 exports.get_posts = async function (req: Request, res: Response) {
 	try {
-		const { skip: strSkip, limit: strLimit } = req.query;
+		const { skip: strSkip = 1, limit: strLimit = 3 } = req.query;
 		const { userid } = req.params;
 
 		const skip = Number(strSkip);
