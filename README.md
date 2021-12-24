@@ -107,6 +107,9 @@
     -   **Node + GraphQL + TypeScript + Apollo**
         -   Next I want to learn how to build a Node + GraphQL + TypeScript + Apollo api. I know that web development is transitioning to using query languages like GraphQL to fetch data instead of REST due to all the benefits it brings. I want to learn how to create one so that I am more comfortable with GraphQL!
 
+-   **Thanks**
+    -   I want to take brackenl API implementation since I used it as an example to build mine https://github.com/brackenl/odinbook_api
+
 ## Technologies:
 
 -   JWT
