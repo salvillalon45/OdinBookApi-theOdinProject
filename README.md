@@ -1,6 +1,5 @@
-<h1 align="center">
+# OdinBook API
 [The Odin Project: Node] - Project: OdinBook API
-</h1>
 
 ## Intro
 
